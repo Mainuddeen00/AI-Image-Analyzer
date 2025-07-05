@@ -1,19 +1,57 @@
-# 🚀 AI Image Analyzer
+🖼️ AI Image Analyzer
 
-A modern web app that lets users upload images, analyze them using AWS Rekognition, and view results with bounding boxes — all in real-time!
 
----
+A serverless AI-powered web app that analyzes images using AWS Rekognition, auto-generates labels and object data, and displays results with a modern UI.
 
-## 📸 What It Does
+🚀 Live Demo
+Upload any image, and see AI-detected labels and bounding boxes in real time!
 
-✅ Upload an image from your browser  
-✅ Securely store it in S3 using a pre-signed URL  
-✅ Trigger a Lambda function via S3 Event Notifications  
-✅ Detect labels (objects, faces, scenes) using Amazon Rekognition  
-✅ Save results back to an S3 `results/` folder  
-✅ Display results beautifully in the frontend — with confidence meters and optional bounding boxes!
+✨ Features
+Secure Uploads: Pre-signed URLs via API Gateway & Lambda
 
----
+Serverless Backend: AWS Lambda triggers Rekognition and stores results
 
-## 🗂️ Architecture Overview
+Real-Time Analysis: View detected objects, faces, and confidence scores
 
+Clean UI: Dark-themed responsive frontend built with HTML, CSS, and JS
+
+Fully Cloud-Hosted: S3 for storage, Vercel for frontend hosting
+
+🛠️ Tech Stack
+Service	Purpose
+AWS S3	Store uploaded images & results
+AWS Lambda	Backend processing, Rekognition calls
+AWS Rekognition	Image object/face detection
+API Gateway	Secure REST API for pre-signed URLs
+CloudWatch	Monitor logs & function execution
+Vercel	Frontend hosting
+
+📂 Project Structure
+bash
+Copy
+Edit
+├── DetectImageLabels.py        # Lambda: Detect labels with Rekognition
+├── GeneratePresignedURL.py     # Lambda: Generate pre-signed PUT URLs
+├── FetchAnalysisResults.py     # Optional Lambda: Fetch results from S3
+├── index.html                  # Frontend UI
+├── README.md                   # Project docs
+🔑 How It Works
+Frontend → Requests a pre-signed S3 upload URL via API Gateway.
+
+User Upload → File uploads securely to input/ folder in S3.
+
+S3 Event → Automatically triggers DetectImageLabels Lambda.
+
+AWS Rekognition → Detects labels, objects, faces, and confidence.
+
+Lambda → Saves results JSON to results/ folder in S3.
+
+Frontend → Fetches and displays the labels with a clean UI.
+
+🚧 Local Development
+✅ This project is 100% serverless — no local server needed.
+You can update & redeploy:
+
+Frontend: Deploy to Vercel (1-click)
+
+Backend: Manage Lambda, S3, and API Gateway in the AWS Console
