@@ -323,9 +323,25 @@
                 statusDiv.style.display = 'block';
                 uploadBtn.disabled = true;
 
-                // 1. Get presigned URL
+                let fileToUpload = currentFile;
+                let uploadFileName = currentFile.name;
+
+                //If PNG, convert it
+                if (currentFile.type === 'image/png' || currentFile.name.endsWith('.png')) {
+                    statusDiv.innerHTML = '<span class="loading"></span> Converting PNG to JPEG...';
+                    const jpegBlob = await convertPngFileToJpegBlob(currentFile);
+
+                    // Create a new File object for consistency
+                    fileToUpload = new File([jpegBlob], currentFile.name.replace(/\.png$/i, '.jpg'), {
+                        type: 'image/jpeg',
+                    });
+
+                    uploadFileName = fileToUpload.name;
+                }
+
+                // 1. Get presigned URL with new filename
                 const presignedResponse = await fetch(
-                    `https://fzdyovb3a2.execute-api.ap-south-1.amazonaws.com/pord/presigned-url?filename=${encodeURIComponent(currentFile.name)}`
+                    `https://fzdyovb3a2.execute-api.ap-south-1.amazonaws.com/pord/presigned-url?filename=${encodeURIComponent(uploadFileName)}`
                 );
 
                 if (!presignedResponse.ok) {
@@ -337,10 +353,10 @@
                 // 2. Upload to S3
                 const uploadResponse = await fetch(uploadURL, {
                     method: 'PUT',
-                    body: currentFile,
+                    body: fileToUpload,
                     headers: {
-                        'Content-Type': currentFile.type || 'application/octet-stream'
-                    }
+                        'Content-Type': fileToUpload.type || 'application/octet-stream',
+                    },
                 });
 
                 if (!uploadResponse.ok) {
@@ -349,9 +365,7 @@
 
                 // 3. Get analysis results
                 statusDiv.innerHTML = '<span class="loading"></span> Analyzing image...';
-
-
-                const results = await waitForResults(currentFile.name);
+                const results = await waitForResults(uploadFileName);
 
                 // 4. Display results
                 displayResults(results);
@@ -366,6 +380,37 @@
                 uploadBtn.disabled = false;
             }
         }
+        async function convertPngFileToJpegBlob(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.onload = function () {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#fff'; // White background for transparency
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0);
+
+                        canvas.toBlob(
+                            (blob) => {
+                                resolve(blob);
+                            },
+                            'image/jpeg',
+                            0.9 // quality
+                        );
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
 
         async function waitForResults(filename, maxAttempts = 10, delay = 2000) {
 
