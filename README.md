@@ -1,12 +1,12 @@
-🖼️ AI Image Analyzer
+AI Image Analyzer
 
 
 A serverless AI-powered web app that analyzes images using AWS Rekognition, auto-generates labels and object data, and displays results with a modern UI.
 
-🚀 Live Demo
+Live Demo
 Upload any image, and see AI-detected labels and bounding boxes in real time!
 
-✨ Features
+Features
 Secure Uploads: Pre-signed URLs via API Gateway & Lambda
 
 Serverless Backend: AWS Lambda triggers Rekognition and stores results
@@ -17,7 +17,7 @@ Clean UI: Dark-themed responsive frontend built with HTML, CSS, and JS
 
 Fully Cloud-Hosted: S3 for storage, Vercel for frontend hosting
 
-🛠️ Tech Stack
+Tech Stack
 Service	Purpose
 AWS S3	Store uploaded images & results
 AWS Lambda	Backend processing, Rekognition calls
@@ -35,7 +35,7 @@ Edit
 ├── FetchAnalysisResults.py     # Optional Lambda: Fetch results from S3
 ├── index.html                  # Frontend UI
 ├── README.md                   # Project docs
-🔑 How It Works
+How It Works
 Frontend → Requests a pre-signed S3 upload URL via API Gateway.
 
 User Upload → File uploads securely to input/ folder in S3.
@@ -48,8 +48,8 @@ Lambda → Saves results JSON to results/ folder in S3.
 
 Frontend → Fetches and displays the labels with a clean UI.
 
-🚧 Local Development
-✅ This project is 100% serverless — no local server needed.
+Local Development
+This project is 100% serverless — no local server needed.
 You can update & redeploy:
 
 Frontend: Deploy to Vercel (1-click)
